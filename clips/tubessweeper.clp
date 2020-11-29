@@ -87,3 +87,20 @@
 		(update ?tile2 (fact-slot-value ?newtile iteration))
 	)
 )
+
+
+(defrule probe-if-status-eq-uc "probe when status tile = uc"
+	(tile ?tile)
+	(test (eq (fact-slot-value ?tile status) (fact-slot-value ?tile unknowncount)))
+	=> 
+	(do-for-all-facts
+		((?tile2 tile))
+		(next-to ?tile2 ?tile)
+		(if (eq (fact-slot-value ?tile2 status) -1)
+			then
+			(printout t "Probing tile at " (fact-slot-value ?tile2 location) crlf)
+			; (probe ?tile2)
+			(break)
+		)
+	)
+)
