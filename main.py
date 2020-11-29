@@ -13,7 +13,7 @@ if __name__ == '__main__':
   # mode input awal: 0 = gui (DEFAULT), 1 = console, 2 = file
   mode = 0
   if (len(sys.argv) > 1):
-    if (sys.argv[1] in ['-g', '--no-gui']):
+    if (sys.argv[1] in ['-ng', '--no-gui']):
       mode = 1
     elif (len(sys.argv) > 2 and sys.argv[1] in ['-f', '--file']):
       mode = 2
