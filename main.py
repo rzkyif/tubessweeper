@@ -10,7 +10,7 @@ if __name__ == '__main__':
   # deklarasi
   n, b, bc = None, None, None
 
-  # mode input awal: 0 = gui, 1 = console, 2 = file
+  # mode input awal: 0 = gui (DEFAULT), 1 = console, 2 = file
   mode = 0
   if (len(sys.argv) > 1):
     if (sys.argv[1] in ['-g', '--no-gui']):

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>679</width>
-    <height>393</height>
+    <height>503</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -35,19 +35,19 @@
      <rect>
       <x>510</x>
       <y>10</y>
-      <width>201</width>
-      <height>16</height>
+      <width>161</width>
+      <height>20</height>
      </rect>
     </property>
     <property name="text">
-     <string>Fakta dan Rule yang Terpilih</string>
+     <string>Hasil Iterasi</string>
     </property>
    </widget>
    <widget class="QPushButton" name="stepButton">
     <property name="geometry">
      <rect>
       <x>470</x>
-      <y>360</y>
+      <y>470</y>
       <width>91</width>
       <height>23</height>
      </rect>
@@ -60,7 +60,7 @@
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>360</y>
+      <y>470</y>
       <width>101</width>
       <height>23</height>
      </rect>
@@ -173,17 +173,46 @@
      <layout class="QGridLayout" name="mapGridLayout"/>
     </widget>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="restartButton">
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>360</y>
+      <y>470</y>
       <width>61</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
      <string>Restart</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>360</y>
+      <width>651</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Output</string>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="outputListWidget">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>380</y>
+      <width>651</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="verticalScrollMode">
+     <enum>QAbstractItemView::ScrollPerPixel</enum>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
