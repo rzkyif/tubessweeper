@@ -32,7 +32,7 @@ class AI():
 
   # kirim agenda dan fakta ke UI
   def refresh_agenda_and_facts(self):
-    self.agenda_function([str(activation.name) for activation in self.env._agenda.activations()])
+    self.agenda_function([re.sub(r'^[0123456789]+ *', '', str(activation)).replace(': ', ':\n') for activation in self.env._agenda.activations()])
     self.facts_function(['f-' + str(i) + ": " + re.sub(r'^f-[0123456789]+ *', '', str(fact)) for i, fact in enumerate(self.env._facts.facts())])
 
   
