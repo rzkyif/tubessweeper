@@ -31,7 +31,7 @@
 	(if (>= (fact-slot-value ?tile iteration) ?iteration) then
 		(return)
 	)
-	(printout t "Updating tile " (fact-slot-value ?tile location) crlf)
+	(python_print "Updating tile " (fact-slot-value ?tile location) crlf)
 	(bind ?bc 0)
 	(bind ?uc 0)
 	(do-for-all-facts 
@@ -54,7 +54,7 @@
 )
 
 (deffunction mark (?tile)
-	(printout t "Marking tile at " (fact-slot-value ?tile location) crlf)
+	(python_print "Marking tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
 	(bind ?newtile (modify ?tile (status 5) (iteration ?*iteration*)))
 	(do-for-all-facts 
@@ -65,7 +65,7 @@
 )
 
 (deffunction unmark (?tile)
-	(printout t "Unmarking tile at " (fact-slot-value ?tile location) crlf)
+	(python_print "Unmarking tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
 	(bind ?status (python_info (fact-slot-value ?tile location)))
 	(bind ?newtile (modify ?tile (status ?status) (iteration ?*iteration*)))
@@ -77,14 +77,14 @@
 )
 
 (deffunction probe (?tile)
-	(printout t "Probing tile at " (fact-slot-value ?tile location) crlf)
+	(python_print "Probing tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
   (bind ?newtile (python_probe (fact-slot-value ?tile location)))
-	(bind ?newtile (modify ?tile (status 5) (iteration ?*iteration*)))
+	(bind ?newnewtile (modify ?newtile (status 5) (iteration ?*iteration*)))
 	(do-for-all-facts 
 		((?tile2 tile))
-		(next-to ?newtile ?tile2)
-		(update ?tile2 (fact-slot-value ?newtile iteration))
+		(next-to ?newnewtile ?tile2)
+		(update ?tile2 (fact-slot-value ?newnewtile iteration))
 	)
 )
 

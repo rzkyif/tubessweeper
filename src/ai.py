@@ -2,7 +2,7 @@ import clips
 import os
 import re
 
-CLIPS_FILE = 'mab.clp'
+CLIPS_FILE = 'tubessweeper.clp'
 CLIPS_IGNORE_PRINT = ['crlf']
 
 class AI():
@@ -47,11 +47,19 @@ class AI():
 
   # load file clips awal (tubessweeper.clp)
   def init_clips(self):
+    # fungsi dari python
     self.env.define_function(self.print, name="python_print")
     self.env.define_function(self.info, name="python_info")
     self.env.define_function(self.probe, name="python_probe")
+    self.env.define_function(self.nextto, name="python_is_next_to")
+    # load clp
     self.env.batch_star(os.path.join(os.getcwd(), 'clips', CLIPS_FILE))
     self.env.reset()
+    # asersi kondisi awal
+    for x in range(self.n):
+      for y in range(self.n):
+        self.env.eval('(assert (tile (location x%dy%d)))' % (x, y))
+    # refresh
     self.refresh_agenda_and_facts()
 
 
@@ -146,5 +154,51 @@ class AI():
     split = location.split('y')
     x = int(split[0].strip('x'))
     y = int(split[1])
-    # matapancing
+    if (self.map[x][y] != 0):
+      result = self.inform(x, y)
+    else:
+      self.inform_expansion(x,y,set())
+      result = self.env.eval("(nth$ 1 (find-fact ((?tile tile)) (eq ?tile:location "+location+")))")
+    return result
   
+
+  # fungsi cek apakah dua lokasi bersebelahan
+  def nextto(self, location1, location2):
+    split = location1.split('y')
+    x1 = int(split[0].strip('x'))
+    y1 = int(split[1])
+    split = location2.split('y')
+    x2 = int(split[0].strip('x'))
+    y2 = int(split[1])
+    return (abs(x2-x1) <= 1) and (abs(y2-y1) <= 1)
+    
+
+  #
+  #  fungsi-fungsi pembantu
+  #
+
+
+  # kirimkan informasi mengenai petak x, y dan petak sekitarnya ke KBS
+  def inform_expansion(self, x, y, blacklist):
+    self.inform(x, y)
+    for h in range(-1, 2):
+      for v in range(-1, 2):
+        xx = x+h
+        yy = y+v
+        if (h == 0 and v == 0) or (xx < 0 or xx >= self.n or yy < 0 or yy >= self.n):
+          continue
+        if self.map[xx][yy] != 0:
+          self.inform(xx,yy)
+        else:
+          nextlist = set(blacklist)
+          nextlist.add((x, y))
+          self.inform_expansion(xx, yy, nextlist)
+
+
+  
+  # kirimkan informasi mengenai petak x, y ke KBS. kembalikan fakta baru
+  def inform(self, x, y):
+    location = 'x'+str(x)+'y'+str(y)
+    for f in self.env._facts.facts():
+      pass
+    return self.env.eval("(modify (nth$ 1 (find-fact ((?tile tile)) (eq ?tile:location "+location+"))) (status "+str(self.map[x][y])+"))")
