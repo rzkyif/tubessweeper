@@ -11,6 +11,9 @@ class AI():
     self.b = b
     self.bc = bc
 
+    self.map = [[0 for y in range(n)] for x in range(n)]
+    self.init_internal_map()
+
     self.log_function = functions[0]
     self.agenda_function = functions[1]
     self.facts_function = functions[2]
@@ -22,28 +25,54 @@ class AI():
     self.init_clips()
 
 
+  #
+  #  fungsi-fungsi umum
+  #
+
+
+  # bikin peta yg ga diketahui clips
+  def init_internal_map(self):
+    # taro bom
+    for x, y in self.bc:
+      self.map[x][y] = 5
+      # update sekitar bom
+      for h in range(-1, 2):
+        for v in range(-1, 2):
+          xx = x+h
+          yy = y+v
+          if (h == 0 and v == 0) or (xx < 0 or xx >= self.n or yy < 0 or yy >= self.n):
+            continue
+          self.map[xx][yy] += 1
+
+
   # load file clips awal (tubessweeper.clp)
   def init_clips(self):
-    self.env.define_function(self.print)
+    self.env.define_function(self.print, name="python_print")
+    self.env.define_function(self.info, name="python_info")
+    self.env.define_function(self.probe, name="python_probe")
     self.env.batch_star(os.path.join(os.getcwd(), 'clips', CLIPS_FILE))
     self.env.reset()
     self.refresh_agenda_and_facts()
+
+
+  # cek bisa run atau udah kelar
+  def can_run(self):
+    try:
+      next(self.env._agenda.activations())
+    except StopIteration:
+      return False
+    return True
+    
+
+  #
+  #  fungsi-fungsi UI
+  #
 
 
   # kirim agenda dan fakta ke UI
   def refresh_agenda_and_facts(self):
     self.agenda_function([re.sub(r'^[0123456789]+ *', '', str(activation)).replace(': ', ':\n') for activation in self.env._agenda.activations()])
     self.facts_function(['f-' + str(i) + ": " + re.sub(r'^f-[0123456789]+ *', '', str(fact)) for i, fact in enumerate(self.env._facts.facts())])
-
-  
-  # fungsi print untuk CLIPS
-  def print(self, *args):
-    joined = ""
-    for arg in args:
-      string = str(arg)
-      if string not in CLIPS_IGNORE_PRINT:
-        joined += str(arg)
-    self.print_function(joined)
 
 
   # print rule paling tinggi di agenda + fact yg terkait
@@ -64,16 +93,6 @@ class AI():
         log += '\n f-' + str(i) + ': ' + re.sub(r'^f-[0123456789]+ *', '', str(fact))
     log += '\n'
     self.log_function(log)
-
-
-  # cek bisa run atau udah kelar
-  def can_run(self):
-    try:
-      next(self.env._agenda.activations())
-    except StopIteration:
-      return False
-
-    return True
 
 
   # run satu kali, return masih bisa run atau ngga
@@ -97,4 +116,35 @@ class AI():
     while (self.can_run()):
       self.step()
     self.refresh_agenda_and_facts()
+    
+
+  #
+  #  fungsi-fungsi CLIPS
+  #
+
+  
+  # fungsi print untuk CLIPS
+  def print(self, *args):
+    joined = ""
+    for arg in args:
+      string = str(arg)
+      if string not in CLIPS_IGNORE_PRINT:
+        joined += str(arg)
+    self.print_function(joined)
+
+  
+  # fungsi cek info suatu koordinat untuk CLIPS
+  def info(self, location):
+    split = location.split('y')
+    x = int(split[0].strip('x'))
+    y = int(split[1])
+    return self.map[x][y]
+
+  
+  # fungsi coba klik suatu koordinat untuk ekspansi dari CLIPS
+  def probe(self, location):
+    split = location.split('y')
+    x = int(split[0].strip('x'))
+    y = int(split[1])
+    # matapancing
   
