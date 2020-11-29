@@ -11,16 +11,18 @@ class InputDialog(QDialog):
 
     self.result = result
 
-    self.setupUI()
+    self.connect_ui()
+
 
   # konek UI ke kode
-  def setupUI(self):
-    self.nSpinBox.valueChanged.connect(self.nChanged)
-    self.buttonBox.accepted.connect(self.pressAccept)
-    self.buttonBox.rejected.connect(self.pressReject)
+  def connect_ui(self):
+    self.nSpinBox.valueChanged.connect(self.on_n_changed)
+    self.buttonBox.accepted.connect(self.on_accept)
+    self.buttonBox.rejected.connect(self.on_reject)
   
-  # kode kalo Ok dipencet
-  def pressAccept(self):
+
+  # ketika Ok dipencet
+  def on_accept(self):
     self.result[0] = self.nSpinBox.value()
     self.result[1] = self.bSpinBox.value()
     self.result[2] = []
@@ -32,12 +34,14 @@ class InputDialog(QDialog):
         pass
     self.accept()
 
-  # kode kalo Cancel dipencet
-  def pressReject(self):
+
+  # ketika Cancel dipencet
+  def on_reject(self):
     self.reject()
   
-  # kalo n berubah, jumlah bom maksimal jadi (n*n)-1 karena gaboleh bom 0,0
-  def nChanged(self, n):
+  
+  # ketika n berubah, jumlah bom maksimal jadi (n*n)-1 karena gaboleh bom 0,0
+  def on_n_changed(self, n):
     self.bSpinBox.setMaximum((n*n)-1)
 
   
