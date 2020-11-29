@@ -2,7 +2,18 @@ import os;
 
 from src.ai import AI
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QFrame, QGridLayout, QLabel, QMainWindow
+from PyQt5.QtCore import Qt
+
+STYLESHEETS = {
+  'unknown': 'QLabel { font: bold 24px; background: rgb(195,195,195); color: black; }',
+  'number0': 'QLabel { font: bold 24px; background: rgb(215,215,215); color: black; }',
+  'number1': 'QLabel { font: bold 24px; background: rgb(215,215,215); color: blue; }',
+  'number2': 'QLabel { font: bold 24px; background: rgb(215,215,215); color: yellow; }',
+  'number3': 'QLabel { font: bold 24px; background: rgb(215,215,215); color: orange; }',
+  'number4': 'QLabel { font: bold 24px; background: rgb(215,215,215); color: red; }',
+  'flagged': 'QLabel { font: bold 24px; background: rgb(195,125,125); color: black; }',
+}
 
 # dialog untuk input pengaturan awal
 class MainWindow(QMainWindow):
@@ -14,6 +25,7 @@ class MainWindow(QMainWindow):
     self.b = b
     self.bc = bc
 
+    self.init_map()
     self.init_ai()
     self.connect_ui()
 
@@ -25,7 +37,17 @@ class MainWindow(QMainWindow):
   
   # inisialisasi AI
   def init_ai(self):
-    self.ai = AI(self.n, self.b, self.bc, [self.log_function, self.agenda_function, self.facts_function, self.print_function])
+    self.ai = AI(self.n, self.b, self.bc, [self.log_function, self.agenda_function, self.facts_function, self.print_function, self.map_function])
+
+  
+  # inisialisasi peta
+  def init_map(self):
+    for x in range(self.n):
+      for y in range(self.n):
+        label = QLabel("")
+        label.setStyleSheet(STYLESHEETS['unknown'])
+        label.setAlignment(Qt.AlignCenter)
+        self.mapFrame.findChild(QGridLayout, 'mapGridLayout').addWidget(label, y, x)
 
 
   # konek UI ke kode
@@ -104,6 +126,37 @@ class MainWindow(QMainWindow):
     self.agendaListWidget.clear()
     for activation in activations:
       self.agendaListWidget.addItem(activation)
+  
+  
+  # fungsi yg dipanggil AI untuk cetak map
+  def map_function(self, current_map):
+    for x in range(self.n):
+      for y in range(self.n):
+        widget = self.mapFrame.findChild(QGridLayout, 'mapGridLayout').itemAtPosition(y, x).widget()
+        if current_map[x][y] == -1:
+          widget.setStyleSheet(STYLESHEETS['unknown'])
+          widget.setText('')
+        elif current_map[x][y] == 0:
+          widget.setStyleSheet(STYLESHEETS['number0'])
+          widget.setText('')
+        elif current_map[x][y] == 1:
+          widget.setStyleSheet(STYLESHEETS['number1'])
+          widget.setText('1')
+        elif current_map[x][y] == 2:
+          widget.setStyleSheet(STYLESHEETS['number2'])
+          widget.setText('2')
+        elif current_map[x][y] == 3:
+          widget.setStyleSheet(STYLESHEETS['number3'])
+          widget.setText('3')
+        elif current_map[x][y] == 4:
+          widget.setStyleSheet(STYLESHEETS['number4'])
+          widget.setText('4')
+        elif current_map[x][y] == 5:
+          widget.setStyleSheet(STYLESHEETS['flagged'])
+          widget.setText('🚩')
+        elif current_map[x][y] == 6:
+          widget.setStyleSheet(STYLESHEETS['flagged'])
+          widget.setText('💣')
 
 
   

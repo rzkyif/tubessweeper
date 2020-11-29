@@ -1,4 +1,8 @@
+;   VARIABEL GLOBAL
+
 (defglobal ?*iteration* = 0)
+
+;   TEMPLATE
 
 (deftemplate tile
 	(slot location
@@ -23,6 +27,8 @@
 	)
 )
 
+;   FUNGSI
+
 (deffunction next-to (?tile1 ?tile2)
 	(python_is_next_to (fact-slot-value ?tile1 location) (fact-slot-value ?tile2 location))
 )
@@ -31,16 +37,15 @@
 	(if (>= (fact-slot-value ?tile iteration) ?iteration) then
 		(return)
 	)
-	(python_print "Updating tile " (fact-slot-value ?tile location) crlf)
 	(bind ?bc 0)
 	(bind ?uc 0)
 	(do-for-all-facts 
     ((?tile2 tile))
 		(next-to ?tile ?tile2)
-		(if (eq (fact-slot-value ?tile2 status) -1) then
+		(if (eq ?tile2:status -1) then
 			(bind ?uc (+ ?uc 1))
 		else 
-			(if (eq (fact-slot-value ?tile2 status) 5) then
+			(if (eq ?tile2:status 5) then
 				(bind ?bc (+ ?bc 1))
 			)
 		)
@@ -67,8 +72,7 @@
 (deffunction unmark (?tile)
 	(python_print "Unmarking tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
-	(bind ?status (python_info (fact-slot-value ?tile location)))
-	(bind ?newtile (modify ?tile (status ?status) (iteration ?*iteration*)))
+	(bind ?newtile (modify ?tile (status -1) (iteration ?*iteration*)))
 	(do-for-all-facts 
 		((?tile2 tile))
 		(next-to ?newtile ?tile2)
@@ -79,11 +83,24 @@
 (deffunction probe (?tile)
 	(python_print "Probing tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
-  (bind ?newtile (python_probe (fact-slot-value ?tile location)))
-	(bind ?newnewtile (modify ?newtile (status 5) (iteration ?*iteration*)))
+  (bind ?newtileindex (python_probe (fact-slot-value ?tile location)))
+	(if (eq (fact-slot-value ?newtileindex status) 6) then
+		(assert (game over))
+		(return)
+	)
+	(bind ?newnewtile (modify ?newtileindex (iteration ?*iteration*)))
 	(do-for-all-facts 
 		((?tile2 tile))
 		(next-to ?newnewtile ?tile2)
 		(update ?tile2 (fact-slot-value ?newnewtile iteration))
 	)
+)
+
+;   RULE
+
+(defrule random-probe
+	(not (game over))
+	?t<-(tile (location ?))
+	=>
+	(probe ?t)
 )
