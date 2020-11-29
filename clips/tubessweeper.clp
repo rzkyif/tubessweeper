@@ -37,10 +37,10 @@
 	(do-for-all-facts 
     ((?tile2 tile))
 		(next-to ?tile ?tile2)
-		(if (eq (fact-slot-value ?tile2 status) 1) then
+		(if (eq (fact-slot-value ?tile2 status) -1) then
 			(bind ?uc (+ ?uc 1))
 		else 
-			(if (eq (fact-slot-value ?tile2 status) 0) then
+			(if (eq (fact-slot-value ?tile2 status) 5) then
 				(bind ?bc (+ ?bc 1))
 			)
 		)
