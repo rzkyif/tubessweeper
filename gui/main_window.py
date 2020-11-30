@@ -3,7 +3,7 @@ import os;
 from src.ai import AI
 from PyQt5.uic import loadUi
 from PyQt5.QtWidgets import QFrame, QGridLayout, QLabel, QMainWindow
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QTimer, Qt
 
 STYLESHEETS = {
   'unknown': 'QLabel { font: bold 16px; background: dimgrey; color: black; }',
@@ -24,6 +24,8 @@ class MainWindow(QMainWindow):
     self.n = n
     self.b = b
     self.bc = bc
+    self.run_timer = QTimer()
+    self.run_timer.timeout.connect(self.on_step_clicked)
 
     self.setFixedSize(self.width(), self.height())
 
@@ -79,16 +81,21 @@ class MainWindow(QMainWindow):
     self.ai.step(True)
     if (not self.ai.can_run()):
       self.stepButton.setDisabled(True)
+      if self.run_timer.isActive():
+        self.run_timer.stop()
       self.runButton.setDisabled(True)
+      self.runButton.setText('Run Hingga Selesai')
     self.refresh_window_title()
 
 
-  # ketika "Selesaikan" dipencet
+  # ketika "Run Hingga Selesai" dipencet
   def on_run_clicked(self):
-    self.ai.run()
-    self.stepButton.setDisabled(True)
-    self.runButton.setDisabled(True)
-    self.refresh_window_title()
+    if (self.run_timer.isActive()):
+      self.run_timer.stop()
+      self.runButton.setText('Run Hingga Selesai')
+    else:
+      self.run_timer.start(500)
+      self.runButton.setText('Berhenti Run')
 
   
   # ketika "Restart" dipencet
@@ -114,7 +121,7 @@ class MainWindow(QMainWindow):
 
   # fungsi yg dipanggil AI untuk nulis log
   def log_function(self, string):
-    self.logListWidget.addItem("[Iteration "+str(self.ai.iteration)+"]\n"+string)
+    self.logListWidget.addItem("[Step "+str(self.ai.iteration)+"]\n\n"+string)
     self.logListWidget.scrollToBottom()
   
 

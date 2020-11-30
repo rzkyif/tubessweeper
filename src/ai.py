@@ -110,7 +110,7 @@ class AI():
     log = "[Rule]\n "
     log += rule
     if (len(facts) > 0):
-      log += "\n[Facts]"
+      log += "\n\n[Facts]"
       for i, fact in facts:
         log += '\n f-' + str(i) + ': ' + re.sub(r'^f-[0123456789]+ *', '', str(fact))
     log += '\n'
@@ -133,13 +133,6 @@ class AI():
       self.refresh()
 
     return self.can_run()
-
-
-  # run program clips sampai selesai
-  def run(self):
-    while (self.can_run()):
-      self.step()
-    self.refresh()
     
 
   #
