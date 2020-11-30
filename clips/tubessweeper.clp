@@ -59,15 +59,15 @@
 )
 
 (deffunction mark (?tile)
-	(python_print "Marking tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
+	(python_print ?*iteration* ". Marking tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?newtile (python_mark (fact-slot-value ?tile location)))
 	(update ?newtile ?*iteration*)
 )
 
 (deffunction probe (?tile)
-	(python_print "Probing tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
+	(python_print ?*iteration* ". Probing tile at " (fact-slot-value ?tile location) crlf)
   (bind ?newtile (python_probe (fact-slot-value ?tile location)))
 	(update ?newtile ?*iteration*)
 )
@@ -84,10 +84,11 @@
 (defrule win-condition
 	(game-finished ?status)
 	=>
+	(bind ?*iteration* (+ ?*iteration* 1))
 	(if (eq ?status win) then
-		(python_print "Bot successfully finished the game!")
+		(python_print ?*iteration* ". Bot successfully finished the game!")
 	else 
-		(python_print "Bot failed and probed a bomb!")
+		(python_print ?*iteration* ". Bot failed and probed a bomb!")
 	)
 )
 
