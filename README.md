@@ -11,7 +11,7 @@ Minesweeper AI yang dibuat dengan Python dan CLIPS.
 ### Instalasi
 1. Install Python 3 dengan mengikuti petunjuk di [halaman download Python 3.](https://www.python.org/downloads/)
 2. Install PyQT5 dengan mengikuti petunjuk di [halaman pypi untuk PyQT5.](https://pypi.org/project/PyQt5/)
-3. Install clipspy dengen menjalankan perintah berikut:
+3. Install clipspy dengan menjalankan perintah berikut:
    ```
    pip install clipspy
    ```
