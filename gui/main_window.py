@@ -6,13 +6,13 @@ from PyQt5.QtWidgets import QFrame, QGridLayout, QLabel, QMainWindow
 from PyQt5.QtCore import Qt
 
 STYLESHEETS = {
-  'unknown': 'QLabel { font: bold 24px; background: grey; color: black; }',
-  'number0': 'QLabel { font: bold 24px; background: darkgrey; color: black; }',
-  'number1': 'QLabel { font: bold 24px; background: darkgrey; color: blue; }',
-  'number2': 'QLabel { font: bold 24px; background: darkgrey; color: gold; }',
-  'number3': 'QLabel { font: bold 24px; background: darkgrey; color: orange; }',
-  'number4': 'QLabel { font: bold 24px; background: darkgrey; color: red; }',
-  'flagged': 'QLabel { font: bold 24px; background: darksalmon; color: black; }',
+  'unknown': 'QLabel { font: bold 24px; background: dimgrey; color: black; }',
+  'number0': 'QLabel { font: bold 24px; background: grey; color: black; }',
+  'number1': 'QLabel { font: bold 24px; background: grey; color: blanchedalmond; }',
+  'number2': 'QLabel { font: bold 24px; background: grey; color: gold; }',
+  'number3': 'QLabel { font: bold 24px; background: grey; color: lightsalmon; }',
+  'number4': 'QLabel { font: bold 24px; background: grey; color: red; }',
+  'flagged': 'QLabel { font: bold 24px; background: salmon; color: black; }',
 }
 
 # dialog untuk input pengaturan awal

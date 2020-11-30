@@ -39,7 +39,26 @@ if __name__ == '__main__':
 
   # syarat: n, b, dan bc valid
   if n is None or b is None or bc is None or b >= (n*n) or (0,0) in bc:
+    print('Input tidak valid!')
     sys.exit(0)
+
+  # syarat: maks bom disekitar satu titik 4
+  map = [[0 for y in range(n)] for x in range(n)]
+  for x, y in bc:
+    map[x][y] = 6
+    # update sekitar bom
+    for h in range(-1, 2):
+      for v in range(-1, 2):
+        xx = x+h
+        yy = y+v
+        if (h == 0 and v == 0) or (xx < 0 or xx >= n or yy < 0 or yy >= n):
+          continue
+        if (map[xx][yy] <= 4):
+          map[xx][yy] += 1
+          if map[xx][yy] == 5:
+            print('Input tidak valid!')
+            sys.exit(0)
+
   
   print("N:", n)
   print("B:", b)
