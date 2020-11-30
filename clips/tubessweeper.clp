@@ -87,7 +87,7 @@
 
 (defrule random-probe
 	(not (game over))
-	?t<-(tile (location ?))
+	?t<-(tile (status -1))
 	=>
 	(probe ?t)
 )
