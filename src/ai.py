@@ -60,9 +60,6 @@ class AI():
     # load clp
     self.env.batch_star(os.path.join(os.getcwd(), 'clips', CLIPS_FILE))
     self.env.reset()
-
-    for rule in self.env._agenda.rules():
-      print(rule.name)
     # asersi kondisi awal
     for x in range(self.n):
       for y in range(self.n):
