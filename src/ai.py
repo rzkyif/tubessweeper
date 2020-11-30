@@ -18,6 +18,7 @@ class AI():
     self.agenda_function = functions[1]
     self.facts_function = functions[2]
     self.print_function = functions[3]
+    self.map_function = functions[4]
 
     self.iteration = 0
     self.env = clips.Environment()
@@ -34,7 +35,7 @@ class AI():
   def init_internal_map(self):
     # taro bom
     for x, y in self.bc:
-      self.map[x][y] = 5
+      self.map[x][y] = 6
       # update sekitar bom
       for h in range(-1, 2):
         for v in range(-1, 2):
@@ -42,7 +43,8 @@ class AI():
           yy = y+v
           if (h == 0 and v == 0) or (xx < 0 or xx >= self.n or yy < 0 or yy >= self.n):
             continue
-          self.map[xx][yy] += 1
+          if (self.map[xx][yy] < 4):
+            self.map[xx][yy] += 1
 
 
   # load file clips awal (tubessweeper.clp)
@@ -60,7 +62,7 @@ class AI():
       for y in range(self.n):
         self.env.eval('(assert (tile (location x%dy%d)))' % (x, y))
     # refresh
-    self.refresh_agenda_and_facts()
+    self.refresh()
 
 
   # cek bisa run atau udah kelar
@@ -77,10 +79,16 @@ class AI():
   #
 
 
-  # kirim agenda dan fakta ke UI
-  def refresh_agenda_and_facts(self):
+  # kirim agenda, fakta, dan peta ke UI
+  def refresh(self):
     self.agenda_function([re.sub(r'^[0123456789]+ *', '', str(activation)).replace(': ', ':\n') for activation in self.env._agenda.activations()])
-    self.facts_function(['f-' + str(i) + ": " + re.sub(r'^f-[0123456789]+ *', '', str(fact)) for i, fact in enumerate(self.env._facts.facts())])
+    self.facts_function(['f-' + str(fact.index) + ": " + re.sub(r'^f-[0123456789]+ *', '', str(fact)) for fact in self.env._facts.facts()])
+    current_map = [[-1 for y in range(self.n)] for x in range(self.n)]
+    for fact in self.env._facts.facts():
+      if fact.template.name == "tile":
+        x, y = self.l_to_c(fact['location'])
+        current_map[x][y] = fact['status']
+    self.map_function(current_map)
 
 
   # print rule paling tinggi di agenda + fact yg terkait
@@ -114,7 +122,7 @@ class AI():
     self.env._agenda.run(1)
 
     if (refresh):
-      self.refresh_agenda_and_facts()
+      self.refresh()
 
     return self.can_run()
 
@@ -123,7 +131,7 @@ class AI():
   def run(self):
     while (self.can_run()):
       self.step()
-    self.refresh_agenda_and_facts()
+    self.refresh()
     
 
   #
@@ -143,34 +151,35 @@ class AI():
   
   # fungsi cek info suatu koordinat untuk CLIPS
   def info(self, location):
-    split = location.split('y')
-    x = int(split[0].strip('x'))
-    y = int(split[1])
+    x, y = self.l_to_c(location)
     return self.map[x][y]
 
   
   # fungsi coba klik suatu koordinat untuk ekspansi dari CLIPS
   def probe(self, location):
-    split = location.split('y')
-    x = int(split[0].strip('x'))
-    y = int(split[1])
+    x, y = self.l_to_c(location)
     if (self.map[x][y] != 0):
+      if self.map[x][y] == 6:
+        print("Game over\nSending all map info to KBS")
+        for xx in range(self.n):
+          for yy in range(self.n):
+            if (xx != x) or (yy != y):
+              self.inform(xx, yy)
       result = self.inform(x, y)
     else:
       self.inform_expansion(x,y,set())
-      result = self.env.eval("(nth$ 1 (find-fact ((?tile tile)) (eq ?tile:location "+location+")))")
+      result = self.find_facts('tile', {'location': location})[0]
     return result
   
 
   # fungsi cek apakah dua lokasi bersebelahan
   def nextto(self, location1, location2):
-    split = location1.split('y')
-    x1 = int(split[0].strip('x'))
-    y1 = int(split[1])
-    split = location2.split('y')
-    x2 = int(split[0].strip('x'))
-    y2 = int(split[1])
-    return (abs(x2-x1) <= 1) and (abs(y2-y1) <= 1)
+    if location1 == location2:
+      return False
+    x1, y1 = self.l_to_c(location1)
+    x2, y2 = self.l_to_c(location2)
+    result = ((abs(x2-x1) <= 1) and (abs(y2-y1) <= 1))
+    return result
     
 
   #
@@ -194,11 +203,50 @@ class AI():
           nextlist.add((x, y))
           self.inform_expansion(xx, yy, nextlist)
 
-
   
   # kirimkan informasi mengenai petak x, y ke KBS. kembalikan fakta baru
   def inform(self, x, y):
-    location = 'x'+str(x)+'y'+str(y)
-    for f in self.env._facts.facts():
-      pass
-    return self.env.eval("(modify (nth$ 1 (find-fact ((?tile tile)) (eq ?tile:location "+location+"))) (status "+str(self.map[x][y])+"))")
+    print('Informing about (%d, %d) to KBS' % (x, y))
+    location = self.c_to_l(x, y)
+    fact = self.find_facts('tile', {'location': location})[0]
+    new_fact = self.copy_tile(fact)
+    new_fact['status'] = self.map[x][y]
+    fact.retract()
+    new_fact.assertit()
+    return new_fact
+
+
+  # cari fakta
+  def find_facts(self, type, properties):
+    result = []
+    for fact in self.env._facts.facts():
+      if fact.template.name == type:
+        same = True
+        for key in properties.keys():
+          if fact[key] != properties[key]:
+            same = False
+        if same:
+          result.append(fact)
+    return result
+
+  
+  # duplikat fakta
+  def copy_tile(self, tile):
+      new_fact = tile.template.new_fact()
+      new_fact['location'] = tile['location']
+      new_fact['status'] = tile['status']
+      new_fact['iteration'] = tile['iteration']
+      return new_fact
+
+  
+  # location to coordinates
+  def l_to_c(self, location):
+    split = location.split('y')
+    x = int(split[0].strip('x'))
+    y = int(split[1])
+    return x, y
+
+  
+  # coordinates to location
+  def c_to_l(self, x, y):
+    return 'x'+str(x)+'y'+str(y)
