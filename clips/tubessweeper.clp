@@ -61,7 +61,7 @@
 (deffunction mark (?tile)
 	(python_print "Marking tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
-	(bind ?newtile (modify ?tile (status 5)))
+	(bind ?newtile (python_mark (fact-slot-value ?tile location)))
 	(update ?newtile ?*iteration*)
 )
 
@@ -69,22 +69,30 @@
 	(python_print "Probing tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
   (bind ?newtile (python_probe (fact-slot-value ?tile location)))
-	(if (eq (fact-slot-value ?newtile status) 6) then
-		(assert (game over))
-		(return)
-	)
 	(update ?newtile ?*iteration*)
 )
 
+;   RULE
 
-(defrule initiate
+(defrule start-condition
 	?tile<-(tile (location x0y0) (status -1))
 	=>
 	(probe ?tile)
 )
 
+
+(defrule win-condition
+	(game-finished ?status)
+	=>
+	(if (eq ?status win) then
+		(python_print "Bot successfully finished the game!")
+	else 
+		(python_print "Bot failed and probed a bomb!")
+	)
+)
+
 (defrule probe-if-status-eq-bc "probe when status tile = uc"
-	(not (game over))
+	(not (game-finished))
 	?tile<-(tile (status ~-1&~0))
 	(test (eq (fact-slot-value ?tile status) (fact-slot-value ?tile bombcount)))
 	(test (neq (fact-slot-value ?tile unknowncount) 0))
@@ -102,7 +110,7 @@
 )
 
 (defrule mark-if-status-eq-uc "mark neighboor tile when status tile = uc"
-	(not (game over))
+	(not (game-finished))
 	?tile<-(tile (status ~-1&~0))
 	(test 
 		(eq 

@@ -10,6 +10,8 @@ class AI():
     self.n = n
     self.b = b
     self.bc = bc
+
+    self.found_bombs = 0
     self.informed = set()
 
     self.map = [[0 for y in range(n)] for x in range(n)]
@@ -52,7 +54,7 @@ class AI():
   def init_clips(self):
     # fungsi dari python
     self.env.define_function(self.print, name="python_print")
-    self.env.define_function(self.info, name="python_info")
+    self.env.define_function(self.mark, name="python_mark")
     self.env.define_function(self.probe, name="python_probe")
     self.env.define_function(self.nextto, name="python_is_next_to")
     # load clp
@@ -155,10 +157,20 @@ class AI():
     self.print_function(joined)
 
   
-  # fungsi cek info suatu koordinat untuk CLIPS
-  def info(self, location):
+  # fungsi mark suatu koordinat dari CLIPS
+  def mark(self, location):
     x, y = self.l_to_c(location)
-    return self.map[x][y]
+    if self.map[x][y] == 6:
+      self.found_bombs += 1
+      if self.found_bombs == self.b:
+        print("Game Finished: Bot Won\nSending all non-bomb map info to KBS")
+        for xx in range(self.n):
+          for yy in range(self.n):
+            if (xx != x) or (yy != y):
+              if self.map[xx][yy] != 6:
+                self.inform(xx, yy)
+        self.env.eval('(assert (game-finished win))')
+    return self.inform(x, y, 5)
 
   
   # fungsi coba klik suatu koordinat untuk ekspansi dari CLIPS
@@ -166,11 +178,12 @@ class AI():
     x, y = self.l_to_c(location)
     if (self.map[x][y] != 0):
       if self.map[x][y] == 6:
-        print("Game over\nSending all map info to KBS")
+        print("Game Finished: Bot Lost\nSending all map info to KBS")
         for xx in range(self.n):
           for yy in range(self.n):
             if (xx != x) or (yy != y):
               self.inform(xx, yy)
+        self.env.eval('(assert (game-finished lose))')
       result = self.inform(x, y)
     else:
       self.inform_expansion(x,y,set())
@@ -213,14 +226,17 @@ class AI():
 
   
   # kirimkan informasi mengenai petak x, y ke KBS. kembalikan fakta baru
-  def inform(self, x, y):
+  def inform(self, x, y, status=None):
     if((x,y) not in self.informed):
-      self.informed.add((x,y))
       print('Informing about (%d, %d) to KBS' % (x, y))
       location = self.c_to_l(x, y)
       fact = self.find_facts('tile', {'location': location})[0]
       new_fact = self.copy_tile(fact)
-      new_fact['status'] = self.map[x][y]
+      if status is None:
+        new_fact['status'] = self.map[x][y]
+        self.informed.add((x,y))
+      else:
+        new_fact['status'] = status
       fact.retract()
       new_fact.assertit()
       return new_fact
