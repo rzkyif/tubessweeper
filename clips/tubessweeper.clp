@@ -85,25 +85,65 @@
 
 ;   RULE
 
-(defrule random-probe
-	(not (game over))
-	?t<-(tile (status -1))
+; (defrule random-probe
+; 	(not (game over))
+; 	?t<-(tile (status -1))
+; 	=>
+; 	(probe ?t)
+; )
+
+
+(defrule initiate
+	?tile<-(tile (location x0y0) (status -1))
 	=>
-	(probe ?t)
+	(probe ?tile)
 )
 
-
-(defrule probe-if-status-eq-uc "probe when status tile = uc"
-	(tile ?tile)
-	(test (eq (fact-slot-value ?tile status) (fact-slot-value ?tile unknowncount)))
+(defrule probe-if-status-eq-bc "probe when status tile = uc"
+	(not (game over))
+	?tile<-(tile (status ~-1&~0))
+	(test (eq (fact-slot-value ?tile status) (fact-slot-value ?tile bombcount)))
+	(test (neq (fact-slot-value ?tile unknowncount) 0))
 	=> 
+	(do-for-all-facts
+		((?tile2 tile))
+		(next-to ?tile2 ?tile)
+		(if (eq (fact-slot-value ?tile2 status) -1) 
+			then
+			(printout t "Probing tile at " (fact-slot-value ?tile2 location) crlf)
+			(probe ?tile2)
+			(break)
+		)
+	)
+)
+
+(defrule mark-if-status-eq-uc "mark neighboor tile when status tile = uc"
+	(not (game over))
+	?tile<-(tile (status ~-1&~0))
+	(test 
+		(eq 
+				(fact-slot-value ?tile unknowncount) 
+			(- 
+				(fact-slot-value ?tile status) 
+				(fact-slot-value ?tile bombcount)
+			)
+		)
+	)
+	(test 
+		(neq 
+		(
+			fact-slot-value ?tile unknowncount) 
+			0
+		)
+	)
+	=>
 	(do-for-all-facts
 		((?tile2 tile))
 		(next-to ?tile2 ?tile)
 		(if (eq (fact-slot-value ?tile2 status) -1)
 			then
-			(printout t "Probing tile at " (fact-slot-value ?tile2 location) crlf)
-			; (probe ?tile2)
+			(printout t "marking tile at " (fact-slot-value ?tile2 location) crlf)
+			(mark ?tile2)
 			(break)
 		)
 	)

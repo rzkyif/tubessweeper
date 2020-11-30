@@ -57,6 +57,9 @@ class AI():
     # load clp
     self.env.batch_star(os.path.join(os.getcwd(), 'clips', CLIPS_FILE))
     self.env.reset()
+
+    for rule in self.env._agenda.rules():
+      print(rule.name)
     # asersi kondisi awal
     for x in range(self.n):
       for y in range(self.n):
@@ -120,6 +123,8 @@ class AI():
 
     self.generate_log()
     self.env._agenda.run(1)
+
+    self.env._agenda.refresh()
 
     if (refresh):
       self.refresh()
@@ -189,19 +194,22 @@ class AI():
 
   # kirimkan informasi mengenai petak x, y dan petak sekitarnya ke KBS
   def inform_expansion(self, x, y, blacklist):
-    self.inform(x, y)
-    for h in range(-1, 2):
-      for v in range(-1, 2):
-        xx = x+h
-        yy = y+v
-        if (h == 0 and v == 0) or (xx < 0 or xx >= self.n or yy < 0 or yy >= self.n):
-          continue
-        if self.map[xx][yy] != 0:
-          self.inform(xx,yy)
-        else:
-          nextlist = set(blacklist)
-          nextlist.add((x, y))
-          self.inform_expansion(xx, yy, nextlist)
+    if((x,y) in blacklist):
+      return
+    else:
+      self.inform(x, y)
+      for h in range(-1, 2):
+        for v in range(-1, 2):
+          xx = x+h
+          yy = y+v
+          if (h == 0 and v == 0) or (xx < 0 or xx >= self.n or yy < 0 or yy >= self.n):
+            continue
+          if self.map[xx][yy] != 0:
+            self.inform(xx,yy)
+          elif (xx,yy) not in blacklist:
+            nextlist = set(blacklist)
+            nextlist.add((x, y))
+            self.inform_expansion(xx, yy, nextlist)
 
   
   # kirimkan informasi mengenai petak x, y ke KBS. kembalikan fakta baru
