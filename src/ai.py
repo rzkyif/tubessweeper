@@ -10,6 +10,7 @@ class AI():
     self.n = n
     self.b = b
     self.bc = bc
+    self.informed = set()
 
     self.map = [[0 for y in range(n)] for x in range(n)]
     self.init_internal_map()
@@ -207,21 +208,22 @@ class AI():
           if self.map[xx][yy] != 0:
             self.inform(xx,yy)
           elif (xx,yy) not in blacklist:
-            nextlist = set(blacklist)
-            nextlist.add((x, y))
-            self.inform_expansion(xx, yy, nextlist)
+            blacklist.add((x, y))
+            self.inform_expansion(xx, yy, blacklist)
 
   
   # kirimkan informasi mengenai petak x, y ke KBS. kembalikan fakta baru
   def inform(self, x, y):
-    print('Informing about (%d, %d) to KBS' % (x, y))
-    location = self.c_to_l(x, y)
-    fact = self.find_facts('tile', {'location': location})[0]
-    new_fact = self.copy_tile(fact)
-    new_fact['status'] = self.map[x][y]
-    fact.retract()
-    new_fact.assertit()
-    return new_fact
+    if((x,y) not in self.informed):
+      self.informed.add((x,y))
+      print('Informing about (%d, %d) to KBS' % (x, y))
+      location = self.c_to_l(x, y)
+      fact = self.find_facts('tile', {'location': location})[0]
+      new_fact = self.copy_tile(fact)
+      new_fact['status'] = self.map[x][y]
+      fact.retract()
+      new_fact.assertit()
+      return new_fact
 
 
   # cari fakta

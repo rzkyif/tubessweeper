@@ -65,13 +65,6 @@
 	(update ?newtile ?*iteration*)
 )
 
-(deffunction unmark (?tile)
-	(python_print "Unmarking tile at " (fact-slot-value ?tile location) crlf)
-	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
-	(bind ?newtile (modify ?tile (status -1)))
-	(update ?newtile ?*iteration*)
-)
-
 (deffunction probe (?tile)
 	(python_print "Probing tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
@@ -82,15 +75,6 @@
 	)
 	(update ?newtile ?*iteration*)
 )
-
-;   RULE
-
-; (defrule random-probe
-; 	(not (game over))
-; 	?t<-(tile (status -1))
-; 	=>
-; 	(probe ?t)
-; )
 
 
 (defrule initiate
