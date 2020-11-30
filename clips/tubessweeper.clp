@@ -103,7 +103,6 @@
 		(next-to ?tile2 ?tile)
 		(if (eq (fact-slot-value ?tile2 status) -1) 
 			then
-			(printout t "Probing tile at " (fact-slot-value ?tile2 location) crlf)
 			(probe ?tile2)
 			(break)
 		)
@@ -135,7 +134,6 @@
 		(next-to ?tile2 ?tile)
 		(if (eq (fact-slot-value ?tile2 status) -1)
 			then
-			(printout t "marking tile at " (fact-slot-value ?tile2 location) crlf)
 			(mark ?tile2)
 			(break)
 		)

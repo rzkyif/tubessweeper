@@ -221,7 +221,7 @@ class AI():
   # kirimkan informasi mengenai petak x, y ke KBS. kembalikan fakta baru
   def inform(self, x, y, status=None):
     if((x,y) not in self.informed):
-      print('Informing about (%d, %d) to KBS' % (x, y))
+      # print('Informing about (%d, %d) to KBS' % (x, y))
       location = self.c_to_l(x, y)
       fact = self.find_facts('tile', {'location': location})[0]
       new_fact = self.copy_tile(fact)
