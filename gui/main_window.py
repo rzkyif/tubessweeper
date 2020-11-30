@@ -94,6 +94,8 @@ class MainWindow(QMainWindow):
     self.init_ai()
     self.logListWidget.clear()
     self.outputListWidget.clear()
+    self.stepButton.setDisabled(not self.ai.can_run())
+    self.runButton.setDisabled(not self.ai.can_run())
     self.refresh_window_title()
 
 

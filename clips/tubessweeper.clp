@@ -61,39 +61,26 @@
 (deffunction mark (?tile)
 	(python_print "Marking tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
-	(bind ?newtile (modify ?tile (status 5) (iteration ?*iteration*)))
-	(do-for-all-facts 
-		((?tile2 tile))
-		(next-to ?newtile ?tile2)
-		(update ?tile2 (fact-slot-value ?newtile iteration))
-	)
+	(bind ?newtile (modify ?tile (status 5)))
+	(update ?newtile ?*iteration*)
 )
 
 (deffunction unmark (?tile)
 	(python_print "Unmarking tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
-	(bind ?newtile (modify ?tile (status -1) (iteration ?*iteration*)))
-	(do-for-all-facts 
-		((?tile2 tile))
-		(next-to ?newtile ?tile2)
-		(update ?tile2 (fact-slot-value ?newtile iteration))
-	)
+	(bind ?newtile (modify ?tile (status -1)))
+	(update ?newtile ?*iteration*)
 )
 
 (deffunction probe (?tile)
 	(python_print "Probing tile at " (fact-slot-value ?tile location) crlf)
 	(bind ?*iteration* (+ (fact-slot-value ?tile iteration) 1))
-  (bind ?newtileindex (python_probe (fact-slot-value ?tile location)))
-	(if (eq (fact-slot-value ?newtileindex status) 6) then
+  (bind ?newtile (python_probe (fact-slot-value ?tile location)))
+	(if (eq (fact-slot-value ?newtile status) 6) then
 		(assert (game over))
 		(return)
 	)
-	(bind ?newnewtile (modify ?newtileindex (iteration ?*iteration*)))
-	(do-for-all-facts 
-		((?tile2 tile))
-		(next-to ?newnewtile ?tile2)
-		(update ?tile2 (fact-slot-value ?newnewtile iteration))
-	)
+	(update ?newtile ?*iteration*)
 )
 
 ;   RULE

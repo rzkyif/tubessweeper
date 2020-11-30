@@ -229,8 +229,6 @@ class AI():
       new_fact['location'] = tile['location']
       new_fact['status'] = tile['status']
       new_fact['iteration'] = tile['iteration']
-      new_fact['bombcount'] = tile['bombcount']
-      new_fact['unknowncount'] = tile['unknowncount']
       return new_fact
 
   
