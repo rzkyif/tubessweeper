@@ -43,7 +43,8 @@ class AI():
           yy = y+v
           if (h == 0 and v == 0) or (xx < 0 or xx >= self.n or yy < 0 or yy >= self.n):
             continue
-          self.map[xx][yy] += 1
+          if (self.map[xx][yy] < 4):
+            self.map[xx][yy] += 1
 
 
   # load file clips awal (tubessweeper.clp)
@@ -158,6 +159,12 @@ class AI():
   def probe(self, location):
     x, y = self.l_to_c(location)
     if (self.map[x][y] != 0):
+      if self.map[x][y] == 6:
+        print("Game over\nSending all map info to KBS")
+        for xx in range(self.n):
+          for yy in range(self.n):
+            if (xx != x) or (yy != y):
+              self.inform(xx, yy)
       result = self.inform(x, y)
     else:
       self.inform_expansion(x,y,set())

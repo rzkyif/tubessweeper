@@ -6,13 +6,13 @@ from PyQt5.QtWidgets import QFrame, QGridLayout, QLabel, QMainWindow
 from PyQt5.QtCore import Qt
 
 STYLESHEETS = {
-  'unknown': 'QLabel { font: bold 24px; background: rgb(195,195,195); color: black; }',
-  'number0': 'QLabel { font: bold 24px; background: rgb(215,215,215); color: black; }',
-  'number1': 'QLabel { font: bold 24px; background: rgb(215,215,215); color: blue; }',
-  'number2': 'QLabel { font: bold 24px; background: rgb(215,215,215); color: yellow; }',
-  'number3': 'QLabel { font: bold 24px; background: rgb(215,215,215); color: orange; }',
-  'number4': 'QLabel { font: bold 24px; background: rgb(215,215,215); color: red; }',
-  'flagged': 'QLabel { font: bold 24px; background: rgb(195,125,125); color: black; }',
+  'unknown': 'QLabel { font: bold 24px; background: grey; color: black; }',
+  'number0': 'QLabel { font: bold 24px; background: darkgrey; color: black; }',
+  'number1': 'QLabel { font: bold 24px; background: darkgrey; color: blue; }',
+  'number2': 'QLabel { font: bold 24px; background: darkgrey; color: gold; }',
+  'number3': 'QLabel { font: bold 24px; background: darkgrey; color: orange; }',
+  'number4': 'QLabel { font: bold 24px; background: darkgrey; color: red; }',
+  'flagged': 'QLabel { font: bold 24px; background: darksalmon; color: black; }',
 }
 
 # dialog untuk input pengaturan awal
