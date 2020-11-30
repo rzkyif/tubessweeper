@@ -85,8 +85,9 @@ Berikut penjelasan kode yang ada pada tiap file.
 6.  `/main.py`
     
     File ini berisi kode alur utama penjalanan aplikasi
-    
-### TubesSweeper
+  
+  
+## Kelompok 8 - TubesSweeper
 1. 13518112 - M Fauzan Al-G
 2. 13518130 - Ryan Daniel
 3. 13518136 - Reyvan Rizky I
