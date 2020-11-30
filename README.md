@@ -45,9 +45,9 @@ Aplikasi dapat dimulai dalam 3 mode penerimaan masukan pengaturan awal:
     1,1
     2,2
     ```
-Setelah aplikasi dimulai, gunakan tombol `Run Satu Iterasi` untuk menjalankan satu *rule* pada CLIPS atau tombol `Run Hingga Selesai` untuk menjalankan CLIPS hingga tidak ada *rule* yang bisa diaktivasi.
+Kami juga menyediakan file `test.bat` untuk menjalankan aplikasi dengan masukan dari file `test.txt`. Isi dari file `test.txt` adalah *test case* yang disediakan pada spesifikasi. File tersebut dapat langsung dijalankan di Windows.
 
-Tombol `Restart` dapat digunakan untuk mengulang aplikasi ke keadaan awal.
+Setelah aplikasi dimulai, gunakan tombol `Run Satu Iterasi` untuk menjalankan satu *rule* pada CLIPS atau tombol `Run Hingga Selesai` untuk menjalankan CLIPS hingga tidak ada *rule* yang bisa diaktivasi. Tombol `Restart` dapat digunakan untuk mengulang aplikasi ke keadaan awal.
 
 ## Dokumentasi
 Struktur file aplikasi ini adalah sebagai berikut.
