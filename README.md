@@ -85,9 +85,20 @@ Berikut penjelasan kode yang ada pada tiap file.
 6.  `/main.py`
     
     File ini berisi kode alur utama penjalanan aplikasi
+
+## Screenshots
+
+1. Setelah kondisi awal (`start-condition`):
+<img src='screenshots/initial.png'>
+
+2. Dalam proses penyelesaian (iterasi 8):
+<img src='screenshots/partial.png'>
+
+3. Setelah kondisi akhir (`win-condition`):
+<img src='screenshots/final.png'>
   
-  
-## Kelompok 8 - TubesSweeper
+## Anggota Kelompok
+### Kelompok 8 (TubesSweeper)
 1. 13518112 - M Fauzan Al-G
 2. 13518130 - Ryan Daniel
 3. 13518136 - Reyvan Rizky I
