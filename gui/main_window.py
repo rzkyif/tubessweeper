@@ -6,13 +6,13 @@ from PyQt5.QtWidgets import QFrame, QGridLayout, QLabel, QMainWindow
 from PyQt5.QtCore import Qt
 
 STYLESHEETS = {
-  'unknown': 'QLabel { font: bold 24px; background: dimgrey; color: black; }',
-  'number0': 'QLabel { font: bold 24px; background: grey; color: black; }',
-  'number1': 'QLabel { font: bold 24px; background: grey; color: blanchedalmond; }',
-  'number2': 'QLabel { font: bold 24px; background: grey; color: gold; }',
-  'number3': 'QLabel { font: bold 24px; background: grey; color: lightsalmon; }',
-  'number4': 'QLabel { font: bold 24px; background: grey; color: red; }',
-  'flagged': 'QLabel { font: bold 24px; background: salmon; color: black; }',
+  'unknown': 'QLabel { font: bold 16px; background: dimgrey; color: black; }',
+  'number0': 'QLabel { font: bold 16px; background: grey; color: black; }',
+  'number1': 'QLabel { font: bold 16px; background: grey; color: blanchedalmond; }',
+  'number2': 'QLabel { font: bold 16px; background: grey; color: gold; }',
+  'number3': 'QLabel { font: bold 16px; background: grey; color: lightsalmon; }',
+  'number4': 'QLabel { font: bold 16px; background: grey; color: red; }',
+  'flagged': 'QLabel { font: bold 16px; background: salmon; color: black; }',
 }
 
 # dialog untuk input pengaturan awal
@@ -24,6 +24,8 @@ class MainWindow(QMainWindow):
     self.n = n
     self.b = b
     self.bc = bc
+
+    self.setFixedSize(self.width(), self.height())
 
     self.init_map()
     self.init_ai()
